@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>趣味测评（框架示例版）</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1 id="pageTitle">趣味测评</h1>
+<p class="muted" id="pageSub"></p>
+<p class="muted">框架示例版：主题、题目、结果尚未确定，当前内容只是占位示例。正式内容确定后只换 <code>content.json</code>，不用改代码。正式版的一次性密钥校验由后端完成，前端不存真密钥。</p>
+
+<div id="home" class="card">
+  <h2>开始测评</h2>
+  <p>输入购买后收到的密钥进入答题。密钥一次性使用，进入后即算用完。</p>
+  <input id="keyInput" placeholder="输入密钥，例如 XXXX-XXXX-XXXX" autocomplete="off">
+  <div class="row">
+    <button id="enterBtn">进入答题</button>
+    <button id="fillBtn" class="secondary">填入演示密钥</button>
+  </div>
+  <p><button id="trialBtn" class="secondary">不用密钥，直接试流程（仅演示）</button></p>
+  <p id="keyMsg" class="muted"></p>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="progress"><div id="bar"></div></div>
+  <p id="qCount" class="muted"></p>
+  <h2 id="qText"></h2>
+  <div id="opts"></div>
+  <div class="row">
+    <button id="prevBtn" class="secondary">← 返回上一题</button>
+    <button id="nextBtn" disabled>下一题 →</button>
+  </div>
+  <p class="muted">选好后点“下一题”继续；也可以随时返回上一题修改答案。</p>
+</div>
+
+<div id="result" class="card hidden">
+  <h2 id="rTitle"></h2>
+  <p id="rBody"></p>
+  <p id="rLearn"></p>
+  <p id="rTry"></p>
+  <div id="rBreakdown"></div>
+  <p class="muted" id="rScore"></p>
+  <p class="muted" id="rDisclaimer"></p>
+  <h3>分享卡</h3>
+  <canvas id="shareCanvas" width="640" height="360"></canvas>
+  <div class="row">
+    <button id="copyBtn" class="secondary">复制分享文案</button>
+    <button id="dlBtn" class="secondary">下载分享卡图片</button>
+  </div>
+  <p id="shareMsg" class="muted"></p>
+  <div class="row">
+    <button id="againBtn" class="secondary">重新测评（需新密钥）</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
