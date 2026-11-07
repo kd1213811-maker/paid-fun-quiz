@@ -152,7 +152,6 @@
   }
 
   function enterWithKey(code) {
-      if (!cfg.allowDemo) { $('trialBtn').style.display = 'none'; }
     msg('正在校验密钥…');
     if (cfg.backend === 'demo') { sessionToken = 'demo'; startQuiz(); return; }
     api('/api/keys/validate', { code: code, redeemOnEntry: cfg.redeemOnEntry !== false })
