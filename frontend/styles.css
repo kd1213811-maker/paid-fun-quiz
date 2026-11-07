@@ -1,0 +1,19 @@
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:640px;margin:0 auto;padding:24px 16px;color:#222;line-height:1.6;background:#fff}
+.card{border:1px solid #e5e5e5;border-radius:16px;padding:20px;margin:16px 0}
+button{padding:10px 18px;border-radius:999px;border:0;background:#ff2442;color:#fff;font-size:16px;cursor:pointer}
+button.secondary{background:#f2f2f2;color:#222}
+button:disabled{opacity:.5;cursor:default}
+input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;box-sizing:border-box}
+.opt{display:block;width:100%;text-align:left;margin:10px 0;background:#fff;color:#222;border:1px solid #ddd}
+.opt:hover{border-color:#ff2442}
+.opt.selected{border-color:#ff2442;background:#fff5f6}
+.muted{color:#888;font-size:14px}
+.progress{height:8px;background:#eee;border-radius:99px;overflow:hidden}
+.progress>div{height:100%;background:#ff2442;width:0%}
+.hidden{display:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px}
+.bar-row .label{width:110px;flex-shrink:0}
+.bar-track{flex:1;height:8px;background:#eee;border-radius:99px;overflow:hidden}
+.bar-track>div{height:100%;background:#ff2442}
+canvas{max-width:100%;border-radius:12px;border:1px solid #eee}
