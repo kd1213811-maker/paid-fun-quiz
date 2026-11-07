@@ -152,6 +152,7 @@
   }
 
   function enterWithKey(code) {
+      if (!cfg.allowDemo) { $('trialBtn').style.display = 'none'; }
     msg('正在校验密钥…');
     if (cfg.backend === 'demo') { sessionToken = 'demo'; startQuiz(); return; }
     api('/api/keys/validate', { code: code, redeemOnEntry: cfg.redeemOnEntry !== false })
@@ -171,6 +172,7 @@
     enterWithKey(k);
   };
   $('fillBtn').onclick = function () { $('keyInput').value = 'DEMO-2026'; msg('已填入演示密钥（本地后端默认自带这一个）。'); };
+    if (!cfg.allowDemo) { $('trialBtn').style.display = 'none'; }
   $('trialBtn').onclick = function () {
     if (!cfg.allowDemo) { msg('演示入口已关闭，请用密钥进入。'); return; }
     demoMode = true; sessionToken = null; startQuiz();
