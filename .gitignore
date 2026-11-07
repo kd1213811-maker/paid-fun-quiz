@@ -1,0 +1,6 @@
+# 绝不能提交到 GitHub 的东西
+backend/local-server/data.json
+tools/keys-*.sql
+tools/keys-*.csv
+*.csv
+.env
