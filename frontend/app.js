@@ -259,6 +259,7 @@
     $('keyInput').value = '';
     msg('重新测评需要新的密钥。');
     show('home');
+    refreshLastBtn();
   };
 
   loadContent().then(function () { refreshLastBtn(); }).catch(function () { msg('加载 content.json 失败，请确认用本地后端或静态服务器打开，不要直接双击文件。'); });
