@@ -21,6 +21,7 @@
   </div>
   <p><button id="trialBtn" class="secondary">不用密钥，直接试流程（仅演示）</button></p>
   <p id="keyMsg" class="muted"></p>
+  <p id="lastWrap" class="hidden"><button id="lastBtn" class="secondary">查看上次结果</button> <span id="lastInfo" class="muted"></span></p>
 </div>
 
 <div id="quiz" class="card hidden">
@@ -45,9 +46,11 @@
   <p class="muted" id="rDisclaimer"></p>
   <h3>分享卡</h3>
   <canvas id="shareCanvas" width="640" height="360"></canvas>
+  <p class="muted">手机保存：点“下载分享卡图片”后到相册查看；如果浏览器直接打开了图片，长按图片选择“保存到相册”。</p>
   <div class="row">
     <button id="copyBtn" class="secondary">复制分享文案</button>
     <button id="dlBtn" class="secondary">下载分享卡图片</button>
+    <button id="openBtn" class="secondary">在新窗口打开图片</button>
   </div>
   <p id="shareMsg" class="muted"></p>
   <div class="row">
