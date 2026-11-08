@@ -105,24 +105,76 @@
     return { winner: winner, scores: scores, dimScores: dimScores };
   }
 
-  function showResult() {
-    var res = computeResult();
+  // 上次结果存在本机浏览器里（localStorage），换设备、清缓存后看不到；只保存结果，不保存密钥。
+  function saveLastResult(res) {
+    try {
+      localStorage.setItem('quiz_last_result', JSON.stringify({
+        resultId: res.winner, scores: res.scores, dimScores: res.dimScores,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (e) {}
+  }
+
+  function loadLastResult() {
+    try {
+      var s = localStorage.getItem('quiz_last_result');
+      return s ? JSON.parse(s) : null;
+    } catch (e) { return null; }
+  }
+
+  function refreshLastBtn() {
+    var saved = loadLastResult();
+    var ok = false;
+    if (saved && content) {
+      var r = content.results.filter(function (x) { return x.id === saved.resultId; })[0];
+      if (r) {
+        ok = true;
+        $('lastInfo').textContent = '上次结果：' + r.title + ' · ' + new Date(saved.savedAt).toLocaleString();
+      }
+    }
+    $('lastWrap').classList.toggle('hidden', !ok);
+  }
+
+  function showSavedResult() {
+    var saved = loadLastResult();
+    if (!saved || !content) return;
+    var r = content.results.filter(function (x) { return x.id === saved.resultId; })[0];
+    if (!r) {
+      try { localStorage.removeItem('quiz_last_result'); } catch (e) {}
+      refreshLastBtn();
+      return;
+    }
+    demoMode = false;
+    sessionToken = null;
+    renderResult({ winner: saved.resultId, scores: saved.scores || {}, dimScores: saved.dimScores || {} });
+  }
+
+  function renderResult(res) {
     var r = content.results.filter(function (x) { return x.id === res.winner; })[0];
+    if (!r) return;
     $('rTitle').textContent = r.title;
     $('rBody').textContent = r.body;
     $('rLearn').textContent = r.learn ? '学到的一点：' + r.learn : '';
     $('rTry').textContent = r.try ? '可以试试：' + r.try : '';
     var breakdown = '';
     content.results.forEach(function (x) {
-      breakdown += '<div class="bar-row"><span class="label">' + x.id + '</span><div class="bar-track"><div style="width:' + Math.round(res.scores[x.id] / content.questions.length * 100) + '%"></div></div><span>' + res.scores[x.id] + ' 分</span></div>';
+      var sc = res.scores[x.id] || 0;
+      breakdown += '<div class="bar-row"><span class="label">' + x.id + '</span><div class="bar-track"><div style="width:' + Math.round(sc / content.questions.length * 100) + '%"></div></div><span>' + sc + ' 分</span></div>';
     });
     (content.dimensions || []).forEach(function (d) {
-      breakdown += '<div class="bar-row"><span class="label">' + d.label + '</span><div class="bar-track"><div style="width:' + Math.round(res.dimScores[d.id] / content.questions.length * 100) + '%"></div></div><span>' + res.dimScores[d.id] + ' 分</span></div>';
+      var ds = res.dimScores[d.id] || 0;
+      breakdown += '<div class="bar-row"><span class="label">' + d.label + '</span><div class="bar-track"><div style="width:' + Math.round(ds / content.questions.length * 100) + '%"></div></div><span>' + ds + ' 分</span></div>';
     });
     $('rBreakdown').innerHTML = breakdown;
-    $('rScore').textContent = '计分明细：' + Object.keys(res.scores).map(function (k) { return k + ' ' + res.scores[k]; }).join(' · ');
+    $('rScore').textContent = '计分明细：' + Object.keys(res.scores).map(function (k) { return k + ' ' + (res.scores[k] || 0); }).join(' · ');
     show('result');
     drawShareCard(r);
+  }
+
+  function showResult() {
+    var res = computeResult();
+    saveLastResult(res);
+    renderResult(res);
     // 出结果时上报一次（本地后端记到 data.json，Supabase 记到 quiz_sessions 表；失败不影响看结果）
     if (!demoMode && sessionToken) {
       api('/api/submit-result', { sessionToken: sessionToken, resultId: res.winner, answers: answers, scores: res.scores }).catch(function () {});
@@ -171,12 +223,13 @@
     enterWithKey(k);
   };
   $('fillBtn').onclick = function () { $('keyInput').value = 'DEMO-2026'; msg('已填入演示密钥（本地后端默认自带这一个）。'); };
-    if (!cfg.allowDemo) { $('trialBtn').style.display = 'none'; }
-    if (!cfg.allowDemo) { $('fillBtn').style.display = 'none'; }
+  if (!cfg.allowDemo) { $('trialBtn').style.display = 'none'; }
+  if (!cfg.allowDemo) { $('fillBtn').style.display = 'none'; }
   $('trialBtn').onclick = function () {
     if (!cfg.allowDemo) { msg('演示入口已关闭，请用密钥进入。'); return; }
     demoMode = true; sessionToken = null; startQuiz();
   };
+  $('lastBtn').onclick = function () { showSavedResult(); };
   $('prevBtn').onclick = function () { if (idx > 0) { idx--; renderQ(); } };
   $('nextBtn').onclick = function () {
     if (answers[idx] < 0) return;
@@ -195,7 +248,11 @@
     a.download = 'share-card.png';
     a.href = $('shareCanvas').toDataURL('image/png');
     a.click();
-    $('shareMsg').textContent = '分享卡已下载。';
+    $('shareMsg').textContent = '分享卡已下载。手机上如果没有自动保存到相册，可以点“在新窗口打开图片”，长按图片保存。';
+  };
+  $('openBtn').onclick = function () {
+    var w = window.open($('shareCanvas').toDataURL('image/png'), '_blank');
+    if (!w) { $('shareMsg').textContent = '浏览器拦截了新窗口，请点“下载分享卡图片”。'; }
   };
   $('againBtn').onclick = function () {
     demoMode = false; sessionToken = null; sessionKey = null;
@@ -204,5 +261,5 @@
     show('home');
   };
 
-  loadContent().catch(function () { msg('加载 content.json 失败，请确认用本地后端或静态服务器打开，不要直接双击文件。'); });
+  loadContent().then(function () { refreshLastBtn(); }).catch(function () { msg('加载 content.json 失败，请确认用本地后端或静态服务器打开，不要直接双击文件。'); });
 })();
